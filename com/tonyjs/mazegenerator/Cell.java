@@ -1,8 +1,11 @@
 package com.tonyjs.mazegenerator;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 
 import javax.swing.JPanel;
 
@@ -100,19 +103,29 @@ public class Cell extends JPanel {
 		}
 
 		g.setColor(Color.BLUE);
+
 		if (path[TOP]) {
-			g.drawLine(SIZE/2, 0, SIZE/2, SIZE/2);
+			drawDashedLine(g, SIZE/2, 0, SIZE/2, SIZE/2);
 		}
 		if (path[RIGHT]) {
-			g.drawLine(SIZE, SIZE/2, SIZE/2, SIZE/2);
+			drawDashedLine(g, SIZE, SIZE/2, SIZE/2, SIZE/2);
 		}
 		if (path[BOTTOM]) {
-			g.drawLine(SIZE/2, SIZE, SIZE/2, SIZE/2);
+			drawDashedLine(g, SIZE/2, SIZE, SIZE/2, SIZE/2);
 		}
 		if (path[LEFT]) {
-			g.drawLine(0, SIZE/2, SIZE/2, SIZE/2);
+			drawDashedLine(g, 0, SIZE/2, SIZE/2, SIZE/2);
 		}
 	}
+
+	public void drawDashedLine(Graphics g, int x1, int y1, int x2, int y2) {
+		Graphics2D g2d = (Graphics2D) g.create();
+		Stroke dashed = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 3);
+		g2d.setStroke(dashed);
+		g2d.drawLine(x1, y1, x2, y2);
+		g2d.dispose();
+	}
+
 
 	public Dimension getPreferredSize() {
 		Dimension size = new Dimension(SIZE, SIZE);

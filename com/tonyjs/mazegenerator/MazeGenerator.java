@@ -148,21 +148,41 @@ public class MazeGenerator extends JFrame {
 		case 38: // up
 			if(!cell[currentRow][currentCol].isWall(0)) {
 				moveTo(currentRow-1, currentCol, 0, 2);
+				while(!cell[currentRow][currentCol].isWall(0) &&
+						cell[currentRow][currentCol].isWall(1) &&
+						cell[currentRow][currentCol].isWall(3)) {
+					moveTo(currentRow-1, currentCol, 0, 2);
+				}
 			}
 			break;
 		case 40: // down
 			if(!cell[currentRow][currentCol].isWall(2)) {
 				moveTo(currentRow+1, currentCol, 2, 0);
+				while(!cell[currentRow][currentCol].isWall(2) &&
+						cell[currentRow][currentCol].isWall(1) &&
+						cell[currentRow][currentCol].isWall(3)) {
+					moveTo(currentRow+1, currentCol, 2, 0);
+				}
 			}
 			break;
 		case 39: // right
 			if(!cell[currentRow][currentCol].isWall(1)) {
 				moveTo(currentRow, currentCol+1, 1, 3);
+				while(!cell[currentRow][currentCol].isWall(1) &&
+						cell[currentRow][currentCol].isWall(0) &&
+						cell[currentRow][currentCol].isWall(2)) {
+					moveTo(currentRow, currentCol+1, 1, 3);
+				}
 			}
 			break;
 		case 37: // left
 			if(!cell[currentRow][currentCol].isWall(3)) {
 				moveTo(currentRow, currentCol-1, 3, 1);
+				while(!cell[currentRow][currentCol].isWall(3) &&
+						cell[currentRow][currentCol].isWall(0) &&
+						cell[currentRow][currentCol].isWall(2)) {
+					moveTo(currentRow, currentCol-1, 3, 1);
+				}
 			}
 			break;
 		}
