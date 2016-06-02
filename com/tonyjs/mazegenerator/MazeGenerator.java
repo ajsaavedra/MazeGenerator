@@ -20,14 +20,15 @@ import javax.swing.UIManager;
 public class MazeGenerator extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private TitleLabel titleLabel = new TitleLabel("Maze");
-	private int rows = 30;
-	private int cols = 30;
+	private int rows = 6;
+	private int cols = 6;
 	private Cell[][] cell = new Cell[rows][cols];
 	private JPanel mazePanel = new JPanel();
 	private int currentRow;
 	private int currentCol;
 	private int endRow = rows - 1;
 	private int endCol = cols - 1;
+	private boolean gameIsWon;
 
 	public MazeGenerator() {
 		initGUI();
@@ -68,14 +69,17 @@ public class MazeGenerator extends JFrame {
 		// listeners
 		addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				int key = e.getKeyCode();
-				moveBall(key);
+				if (!gameIsWon) {
+					int key = e.getKeyCode();
+					moveBall(key);
+				}
 			}
 		});
 	}
 
 	public void newMaze() {
 		mazePanel.removeAll();
+		gameIsWon = false;
 		mazePanel.setLayout(new GridLayout(rows, cols));
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
@@ -209,6 +213,7 @@ public class MazeGenerator extends JFrame {
 		
 		if (currentRow == endRow && currentCol == endCol) {
 			JOptionPane.showMessageDialog(mazePanel, "You Win! Play Again?");
+			gameIsWon = true;
 		}
 	}
 
