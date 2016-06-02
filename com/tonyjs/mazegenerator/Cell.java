@@ -36,6 +36,31 @@ public class Cell extends JPanel {
 		return wall[index];
 	}
 	
+	public boolean hasAllWalls() {
+		return wall[0] && wall[1] && wall[2] && wall[3];
+	}
+	
+	public void removeWall (int w) {
+		wall[w] = false;
+		repaint();
+	}
+	
+	public void openTo(Cell neighbor) {
+		if (row < neighbor.getRow()) {
+			removeWall(BOTTOM);
+			neighbor.removeWall(TOP);
+		} else if (row > neighbor.getRow()) {
+			removeWall(TOP);
+			neighbor.removeWall(BOTTOM);
+		} else if (col < neighbor.getCol()) {
+			removeWall(RIGHT);
+			neighbor.removeWall(LEFT);
+		} else if (col > neighbor.getCol()) {
+			removeWall(LEFT);
+			neighbor.removeWall(RIGHT);
+		}
+	}
+	
 	public void paintComponent(Graphics g) {
 		// draw the background
 		g.setColor(Color.WHITE);
