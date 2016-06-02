@@ -4,12 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -47,6 +51,20 @@ public class MazeGenerator extends JFrame {
 		newMaze();
 		centerPanel.add(mazePanel);
 		
+		//button panel
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBackground(Color.BLACK);
+		add(buttonPanel, BorderLayout.PAGE_END);
+		
+		JButton newMazeButton = new JButton("New Maze");
+		newMazeButton.setFocusable(false);
+		newMazeButton.addActionListener(new ActionListener() {
+			public void actionPerformed( ActionEvent e) {
+				newMaze();
+			}
+		});
+		buttonPanel.add(newMazeButton);
+		
 		// listeners
 		addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
@@ -57,6 +75,7 @@ public class MazeGenerator extends JFrame {
 	}
 
 	public void newMaze() {
+		mazePanel.removeAll();
 		mazePanel.setLayout(new GridLayout(rows, cols));
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
@@ -72,6 +91,7 @@ public class MazeGenerator extends JFrame {
 		endCol = cols - 1;
 		cell[currentRow][currentCol].setCurrent(true);
 		cell[endRow][endCol].setEnd(true);
+		mazePanel.revalidate();
 	}
 
 	private void generateMaze() {
@@ -185,6 +205,10 @@ public class MazeGenerator extends JFrame {
 				}
 			}
 			break;
+		}
+		
+		if (currentRow == endRow && currentCol == endCol) {
+			JOptionPane.showMessageDialog(mazePanel, "You Win! Play Again?");
 		}
 	}
 
