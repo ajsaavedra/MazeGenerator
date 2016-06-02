@@ -20,8 +20,8 @@ import javax.swing.UIManager;
 public class MazeGenerator extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private TitleLabel titleLabel = new TitleLabel("Maze");
-	private int rows = 6;
-	private int cols = 6;
+	private int rows = 30;
+	private int cols = 30;
 	private Cell[][] cell = new Cell[rows][cols];
 	private JPanel mazePanel = new JPanel();
 	private int currentRow;
