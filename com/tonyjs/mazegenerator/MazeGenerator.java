@@ -170,9 +170,9 @@ public class MazeGenerator extends JFrame {
 	private void moveBall(int direction) {
 		switch (direction) {
 		case 38: // up
-			if(!cell[currentRow][currentCol].isWall(0)) {
+			if (!cell[currentRow][currentCol].isWall(0)) {
 				moveTo(currentRow-1, currentCol, 0, 2);
-				while(!cell[currentRow][currentCol].isWall(0) &&
+				while (!cell[currentRow][currentCol].isWall(0) &&
 						cell[currentRow][currentCol].isWall(1) &&
 						cell[currentRow][currentCol].isWall(3)) {
 					moveTo(currentRow-1, currentCol, 0, 2);
@@ -180,9 +180,9 @@ public class MazeGenerator extends JFrame {
 			}
 			break;
 		case 40: // down
-			if(!cell[currentRow][currentCol].isWall(2)) {
+			if (!cell[currentRow][currentCol].isWall(2)) {
 				moveTo(currentRow+1, currentCol, 2, 0);
-				while(!cell[currentRow][currentCol].isWall(2) &&
+				while (!cell[currentRow][currentCol].isWall(2) &&
 						cell[currentRow][currentCol].isWall(1) &&
 						cell[currentRow][currentCol].isWall(3)) {
 					moveTo(currentRow+1, currentCol, 2, 0);
@@ -190,9 +190,9 @@ public class MazeGenerator extends JFrame {
 			}
 			break;
 		case 39: // right
-			if(!cell[currentRow][currentCol].isWall(1)) {
+			if (!cell[currentRow][currentCol].isWall(1)) {
 				moveTo(currentRow, currentCol+1, 1, 3);
-				while(!cell[currentRow][currentCol].isWall(1) &&
+				while (!cell[currentRow][currentCol].isWall(1) &&
 						cell[currentRow][currentCol].isWall(0) &&
 						cell[currentRow][currentCol].isWall(2)) {
 					moveTo(currentRow, currentCol+1, 1, 3);
@@ -200,9 +200,9 @@ public class MazeGenerator extends JFrame {
 			}
 			break;
 		case 37: // left
-			if(!cell[currentRow][currentCol].isWall(3)) {
+			if (!cell[currentRow][currentCol].isWall(3)) {
 				moveTo(currentRow, currentCol-1, 3, 1);
-				while(!cell[currentRow][currentCol].isWall(3) &&
+				while (!cell[currentRow][currentCol].isWall(3) &&
 						cell[currentRow][currentCol].isWall(0) &&
 						cell[currentRow][currentCol].isWall(2)) {
 					moveTo(currentRow, currentCol-1, 3, 1);
