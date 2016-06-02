@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -18,11 +20,15 @@ public class MazeGenerator extends JFrame {
 	private int cols = 30;
 	private Cell[][] cell = new Cell[rows][cols];
 	private JPanel mazePanel = new JPanel();
+	private int row = 0;
+	private int col = 0;
+	private int endRow = rows - 1;
+	private int endCol = cols - 1;
 
 	public MazeGenerator() {
 		initGUI();
 		setTitle("Maze Generator");
-//		setResizable(false);
+		setResizable(false);
 		setLocationRelativeTo(null);
 		pack();
 		setVisible(true);
@@ -40,6 +46,14 @@ public class MazeGenerator extends JFrame {
 		// maze panel
 		newMaze();
 		centerPanel.add(mazePanel);
+		
+		// listeners
+		addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				int key = e.getKeyCode();
+				moveBall(key);
+			}
+		});
 	}
 
 	public void newMaze() {
@@ -51,6 +65,13 @@ public class MazeGenerator extends JFrame {
 			}
 		}
 		generateMaze();
+		
+		row = 0;
+		col = 0;
+		endRow = rows - 1;
+		endCol = cols - 1;
+		cell[row][col].setCurrent(true);
+		cell[endRow][endCol].setEnd(true);
 	}
 
 	private void generateMaze() {
@@ -111,6 +132,38 @@ public class MazeGenerator extends JFrame {
 			available = true;
 		}
 		return available;
+	}
+	
+	public void moveTo(int nextRow, int nextCol) {
+		cell[row][col].setCurrent(false);
+		row = nextRow;
+		col = nextCol;
+		cell[row][col].setCurrent(true);
+	}
+	
+	private void moveBall(int direction) {
+		switch (direction) {
+		case 38: // up
+			if(!cell[row][col].isWall(0)) {
+				moveTo(row-1, col);
+			}
+			break;
+		case 40: // down
+			if(!cell[row][col].isWall(2)) {
+				moveTo(row+1, col);
+			}
+			break;
+		case 39: // right
+			if(!cell[row][col].isWall(1)) {
+				moveTo(row, col+1);
+			}
+			break;
+		case 37: // left
+			if(!cell[row][col].isWall(3)) {
+				moveTo(row, col-1);
+			}
+			break;
+		}
 	}
 
 	public static void main(String[] args) {

@@ -13,38 +13,40 @@ public class Cell extends JPanel {
 	private static final int RIGHT = 1;
 	private static final int BOTTOM = 2;
 	private static final int LEFT = 3;
-	
+	private boolean current = false;
+	private boolean end = false;
 	private int row = -1;
 	private int col = -1;
-	
+
 	private boolean[] wall = {true, true, true, true};
-	
+	private boolean[] path = {false, false, false, false};
+
 	public Cell(int row, int col) {
 		this.row = row;
 		this.col = col;
 	}
-	
+
 	public int getRow() {
 		return row;
 	}
-	
+
 	public int getCol() {
 		return col;
 	}
-	
+
 	public boolean isWall(int index) {
 		return wall[index];
 	}
-	
+
 	public boolean hasAllWalls() {
-		return wall[0] && wall[1] && wall[2] && wall[3];
+		return wall[TOP] && wall[RIGHT] && wall[BOTTOM] && wall[LEFT];
 	}
-	
-	public void removeWall (int w) {
+
+	public void removeWall(int w) {
 		wall[w] = false;
 		repaint();
 	}
-	
+
 	public void openTo(Cell neighbor) {
 		if (row < neighbor.getRow()) {
 			removeWall(BOTTOM);
@@ -60,13 +62,28 @@ public class Cell extends JPanel {
 			neighbor.removeWall(RIGHT);
 		}
 	}
-	
+
+	public void setCurrent(boolean current) {
+		this.current = current;
+		repaint();
+	}
+
+	public void setEnd(boolean end) {
+		this.end = end;
+		repaint();
+	}
+
+	public void addPath(int side) {
+		path[side] = true;
+		repaint();
+	}
+
 	public void paintComponent(Graphics g) {
 		// draw the background
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, SIZE, SIZE);
 		g.setColor(Color.BLACK);
-		
+
 		// draw the walls
 		if (isWall(TOP)) {
 			g.drawLine(0, 0, SIZE, 0);
@@ -74,8 +91,29 @@ public class Cell extends JPanel {
 		if (isWall(LEFT)) {
 			g.drawLine(0, 0, 0, SIZE);
 		}
+		if (current) {
+			g.setColor(Color.BLUE);
+			g.fillOval(3, 3, SIZE-6, SIZE-6);
+		} else if (end) {
+			g.setColor(Color.RED);
+			g.fillOval(3, 3, SIZE-6, SIZE-6);
+		}
+
+		g.setColor(Color.BLUE);
+		if (path[TOP]) {
+			g.drawLine(SIZE/2, 0, SIZE/2, SIZE/2);
+		}
+		if (path[RIGHT]) {
+			g.drawLine(SIZE, SIZE/2, SIZE/2, SIZE/2);
+		}
+		if (path[BOTTOM]) {
+			g.drawLine(SIZE/2, SIZE, SIZE/2, SIZE/2);
+		}
+		if (path[LEFT]) {
+			g.drawLine(0, SIZE/2, SIZE/2, SIZE/2);
+		}
 	}
-	
+
 	public Dimension getPreferredSize() {
 		Dimension size = new Dimension(SIZE, SIZE);
 		return size;
