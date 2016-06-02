@@ -20,8 +20,8 @@ public class MazeGenerator extends JFrame {
 	private int cols = 30;
 	private Cell[][] cell = new Cell[rows][cols];
 	private JPanel mazePanel = new JPanel();
-	private int row = 0;
-	private int col = 0;
+	private int currentRow;
+	private int currentCol;
 	private int endRow = rows - 1;
 	private int endCol = cols - 1;
 
@@ -66,11 +66,11 @@ public class MazeGenerator extends JFrame {
 		}
 		generateMaze();
 		
-		row = 0;
-		col = 0;
+		currentRow = 0;
+		currentCol = 0;
 		endRow = rows - 1;
 		endCol = cols - 1;
-		cell[row][col].setCurrent(true);
+		cell[currentRow][currentCol].setCurrent(true);
 		cell[endRow][endCol].setEnd(true);
 	}
 
@@ -134,33 +134,35 @@ public class MazeGenerator extends JFrame {
 		return available;
 	}
 	
-	public void moveTo(int nextRow, int nextCol) {
-		cell[row][col].setCurrent(false);
-		row = nextRow;
-		col = nextCol;
-		cell[row][col].setCurrent(true);
+	public void moveTo(int nextRow, int nextCol, int firstDirection, int secondDirection) {
+		cell[currentRow][currentCol].setCurrent(false);
+		cell[currentRow][currentCol].addPath(firstDirection);
+		currentRow = nextRow;
+		currentCol = nextCol;
+		cell[currentRow][currentCol].setCurrent(true);
+		cell[currentRow][currentCol].addPath(secondDirection);
 	}
 	
 	private void moveBall(int direction) {
 		switch (direction) {
 		case 38: // up
-			if(!cell[row][col].isWall(0)) {
-				moveTo(row-1, col);
+			if(!cell[currentRow][currentCol].isWall(0)) {
+				moveTo(currentRow-1, currentCol, 0, 2);
 			}
 			break;
 		case 40: // down
-			if(!cell[row][col].isWall(2)) {
-				moveTo(row+1, col);
+			if(!cell[currentRow][currentCol].isWall(2)) {
+				moveTo(currentRow+1, currentCol, 2, 0);
 			}
 			break;
 		case 39: // right
-			if(!cell[row][col].isWall(1)) {
-				moveTo(row, col+1);
+			if(!cell[currentRow][currentCol].isWall(1)) {
+				moveTo(currentRow, currentCol+1, 1, 3);
 			}
 			break;
 		case 37: // left
-			if(!cell[row][col].isWall(3)) {
-				moveTo(row, col-1);
+			if(!cell[currentRow][currentCol].isWall(3)) {
+				moveTo(currentRow, currentCol-1, 3, 1);
 			}
 			break;
 		}
