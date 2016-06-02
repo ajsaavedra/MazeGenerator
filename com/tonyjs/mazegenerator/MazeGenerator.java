@@ -177,6 +177,8 @@ public class MazeGenerator extends JFrame {
 						cell[currentRow][currentCol].isWall(3)) {
 					moveTo(currentRow-1, currentCol, 0, 2);
 				}
+			} else {
+				SoundEffect.playWallEffect();
 			}
 			break;
 		case 40: // down
@@ -187,6 +189,8 @@ public class MazeGenerator extends JFrame {
 						cell[currentRow][currentCol].isWall(3)) {
 					moveTo(currentRow+1, currentCol, 2, 0);
 				}
+			} else {
+				SoundEffect.playWallEffect();
 			}
 			break;
 		case 39: // right
@@ -197,6 +201,8 @@ public class MazeGenerator extends JFrame {
 						cell[currentRow][currentCol].isWall(2)) {
 					moveTo(currentRow, currentCol+1, 1, 3);
 				}
+			} else {
+				SoundEffect.playWallEffect();
 			}
 			break;
 		case 37: // left
@@ -207,6 +213,8 @@ public class MazeGenerator extends JFrame {
 						cell[currentRow][currentCol].isWall(2)) {
 					moveTo(currentRow, currentCol-1, 3, 1);
 				}
+			} else {
+				SoundEffect.playWallEffect();
 			}
 			break;
 		}
