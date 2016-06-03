@@ -2,6 +2,7 @@ package com.tonyjs.mazegenerator;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,9 +11,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
+import javax.swing.Timer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -24,19 +27,19 @@ public class MazeGenerator extends JFrame {
 	private static int cols = 30;
 	private static Cell[][] cell = new Cell[rows][cols];
 	private static JPanel mazePanel = new JPanel();
-	private static int currentRow;
-	private static int currentCol;
+	private static int currentRow, currentCol;
 	private static int endRow = rows - 1;
 	private static int endCol = cols - 1;
-	private static boolean gameIsWon;
-	private static boolean solveMode;
-	private boolean notFound;
-	private JButton newMazeButton;
-	private static JButton solveMaze;
+	private static boolean GAME_IS_WON, SOLVE_MODE, GAME_OVER, GAME_START, NOT_FOUND;
+	private static JButton newMazeButton, startGameButton, solveMaze;
+	private static Timer timer;
+	private static JLabel timerL;
+	private static Container container;
 
 	public MazeGenerator() {
 		initGUI();
 		setTitle("Maze Generator");
+		container = getContentPane();
 		setResizable(false);
 		setLocationRelativeTo(null);
 		pack();
@@ -63,29 +66,51 @@ public class MazeGenerator extends JFrame {
 
 		newMazeButton = new JButton("New Maze");
 		solveMaze = new JButton("Solve Maze");
+		startGameButton = new JButton("Start");
+		timerL = new JLabel("Time: 90");
+		timerL.setSize(120, 20);
+		timerL.setForeground(Color.WHITE);
+
 		newMazeButton.setFocusable(false);
+		solveMaze.setFocusable(false);
+		solveMaze.setEnabled(false);
+		startGameButton.setFocusable(false);
+
 		newMazeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				startGameButton.setEnabled(true);
+				solveMaze.setEnabled(false);
 				newMaze();
-				solveMaze.setEnabled(true);
+				timerL.setText("Time: 90");
 			}
 		});
 		buttonPanel.add(newMazeButton);
 
-		solveMaze.setFocusable(false);
 		solveMaze.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				solveMode = true;
+				SOLVE_MODE = true;
+				GAME_OVER = true;
 				solveAndDrawMaze();
 				solveMaze.setEnabled(false);
 			}
 		});
 		buttonPanel.add(solveMaze);
 
+		startGameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GAME_START = true;
+				solveMaze.setEnabled(true);
+				startGameButton.setEnabled(false);
+				startTimer();
+			}
+		});
+		buttonPanel.add(startGameButton);
+		buttonPanel.add(timerL);
+
 		// listeners
 		addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				if (!gameIsWon) {
+				if (GAME_START && !GAME_IS_WON && !GAME_OVER) {
 					int key = e.getKeyCode();
 					moveBall(key);
 				}
@@ -93,11 +118,75 @@ public class MazeGenerator extends JFrame {
 		});
 	}
 
-	public void newMaze() {
+	public static void startTimer() {
+		timer = new Timer(1000, new ActionListener() {
+			int elapsedSeconds = 89;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String seconds = Integer.toString(elapsedSeconds);
+				if (GAME_OVER || GAME_IS_WON) {
+					timer.stop();
+				} else if (elapsedSeconds == 0) {
+					timer.stop();
+					setGameStates();
+					getGameState();
+				} else {
+					--elapsedSeconds;
+				}
+				timerL.setText("Time: " + seconds);
+			}
+		});
+		timer.start();
+	}
+	
+	public static void setGameStates() {
+		GAME_START = false;
+		GAME_IS_WON = false;
+		GAME_OVER = true;
+	}
+	
+	public static void resetGameStates() {
+		GAME_OVER = false;
+		GAME_IS_WON = false;
+		GAME_START = false;
+	}
+
+	public static void getGameState() {
+		if (!GAME_IS_WON && GAME_OVER) {
+			newMazeButton.setEnabled(true);
+			startGameButton.setEnabled(false);
+			Object[] options = {"Play Again", "Show Solution", "Exit Game"};
+			int n = JOptionPane.showOptionDialog(container,
+					"Game Over!",
+					"Maze Generator",
+					JOptionPane.WARNING_MESSAGE,
+					JOptionPane.WARNING_MESSAGE,
+					null,
+					options,
+					options[2]);
+			switch(n) {
+			case 0:
+				timerL.setText("Time: 90");
+				newMaze();
+				startGameButton.setEnabled(true);
+				solveMaze.setEnabled(false);
+				break;
+			case 1:
+				SOLVE_MODE = true;
+				solveAndDrawMaze();
+				solveMaze.setEnabled(false);
+				break;
+			case 2:
+				System.exit(0);
+			}
+		}
+	}
+
+	public static void newMaze() {
 		mazePanel.removeAll();
-		gameIsWon = false;
-		solveMode = false;
-		notFound = true;
+		resetGameStates();
+		SOLVE_MODE = false;
+		NOT_FOUND = true;
 		mazePanel.setLayout(new GridLayout(rows, cols));
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
@@ -105,6 +194,7 @@ public class MazeGenerator extends JFrame {
 				mazePanel.add(cell[i][j]);
 			}
 		}
+
 		generateMaze();
 
 		currentRow = 0;
@@ -116,7 +206,7 @@ public class MazeGenerator extends JFrame {
 		mazePanel.revalidate();
 	}
 
-	private void generateMaze() {
+	private static void generateMaze() {
 		ArrayList<Cell> tryLaterCell = new ArrayList<Cell>();
 		int totalCells = rows * cols;
 		int visitedCells = 1;
@@ -166,7 +256,7 @@ public class MazeGenerator extends JFrame {
 		}
 	}
 
-	private boolean isAvailable(int row, int col) {
+	private static boolean isAvailable(int row, int col) {
 		boolean available = false;
 		if (row >= 0 && row < rows &&
 				col >= 0 && col < cols &&
@@ -238,15 +328,39 @@ public class MazeGenerator extends JFrame {
 		}
 
 		if (currentRow == endRow && currentCol == endCol) {
-			if (!solveMode) {
-				JOptionPane.showMessageDialog(mazePanel, "You Win! Play Again?");
+			GAME_OVER = true;
+			if (!SOLVE_MODE) {
 				solveMaze.setEnabled(false);
+				GAME_IS_WON = true;
+				showWinningMessage();
 			}
-			gameIsWon = true;
+		}
+	}
+	
+	public static void showWinningMessage() {
+		Object[] options = {"Play Again", "Exit Game"};
+		int n = JOptionPane.showOptionDialog(container,
+				"Winner! You found the exit!",
+				"Maze Generator",
+				JOptionPane.PLAIN_MESSAGE,
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				options,
+				options[1]);
+		switch(n) {
+		case 0:
+			timerL.setText("Time: 90");
+			newMaze();
+			resetGameStates();
+			startGameButton.setEnabled(true);
+			solveMaze.setEnabled(false);
+			break;
+		case 1:
+			System.exit(0);
 		}
 	}
 
-	public void solveAndDrawMaze() {
+	public static void solveAndDrawMaze() {
 		int[][] table = new int[rows][cols];
 		currentCol = 0; 
 		currentRow = 0;
@@ -254,7 +368,7 @@ public class MazeGenerator extends JFrame {
 		drawOutSolution(table, false, true, false, true);
 	}
 
-	public int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol, boolean steppedUp,
+	public static int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol, boolean steppedUp,
 			boolean steppedDown, boolean steppedRight, boolean steppedLeft) {
 
 		int stepUp = 0;
@@ -263,20 +377,20 @@ public class MazeGenerator extends JFrame {
 		int stepLeft = 0;
 
 		if (currentTableRow == endRow && currentTableCol == endCol) {
-			notFound = false;
+			NOT_FOUND = false;
 			table[currentTableRow][currentTableCol] = 100;
 			return table[currentTableRow][currentTableCol];
 		} else {
-			if (!cell[currentTableRow][currentTableCol].isWall(0) && (steppedRight || steppedLeft || !steppedDown) && notFound) {
+			if (!cell[currentTableRow][currentTableCol].isWall(0) && (steppedRight || steppedLeft || !steppedDown) && NOT_FOUND) {
 				stepUp = lookupMazeSolution(table, currentTableRow - 1, currentTableCol, true, false, false, false);
 			}
-			if (!cell[currentTableRow][currentTableCol].isWall(1) && (steppedUp || !steppedLeft || steppedDown) && notFound) {
+			if (!cell[currentTableRow][currentTableCol].isWall(1) && (steppedUp || !steppedLeft || steppedDown) && NOT_FOUND) {
 				stepRight = lookupMazeSolution(table, currentTableRow, currentTableCol + 1, false, false, true, false);
 			}
-			if (!cell[currentTableRow][currentTableCol].isWall(2) && (steppedRight || steppedLeft || !steppedUp) && notFound) {
+			if (!cell[currentTableRow][currentTableCol].isWall(2) && (steppedRight || steppedLeft || !steppedUp) && NOT_FOUND) {
 				stepDown = lookupMazeSolution(table, currentTableRow + 1, currentTableCol, false, true, false, false);
 			}
-			if (!cell[currentTableRow][currentTableCol].isWall(3) && (!steppedRight || steppedUp || steppedDown) && notFound) {
+			if (!cell[currentTableRow][currentTableCol].isWall(3) && (!steppedRight || steppedUp || steppedDown) && NOT_FOUND) {
 				stepLeft = lookupMazeSolution(table, currentTableRow, currentTableCol - 1, false, false, false, true);
 			} 
 
@@ -286,7 +400,7 @@ public class MazeGenerator extends JFrame {
 
 	}
 
-	public void drawOutSolution(int[][] solution, boolean up, boolean down, boolean left, boolean right) {		
+	public static void drawOutSolution(int[][] solution, boolean up, boolean down, boolean left, boolean right) {		
 		int upValue = 0;
 		int downValue = 0;
 		int leftValue = 0;
@@ -369,9 +483,9 @@ public class MazeGenerator extends JFrame {
 	public static void moveRight() {
 		moveBall(39);
 	}
-	
+
 	public static boolean getSolveMode() {
-		return solveMode;
+		return SOLVE_MODE;
 	}
 
 	public static void main(String[] args) {

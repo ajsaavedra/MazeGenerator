@@ -20,6 +20,7 @@ public class Cell extends JPanel {
 	private boolean end = false;
 	private int row = -1;
 	private int col = -1;
+	private Color solution = new Color(139, 58, 185);
 
 	private boolean[] wall = {true, true, true, true};
 	private boolean[] path = {false, false, false, false};
@@ -96,7 +97,7 @@ public class Cell extends JPanel {
 		}
 		if (current) {
 			if (MazeGenerator.getSolveMode()) {
-				g.setColor(Color.ORANGE);
+				g.setColor(solution);
 			} else {
 				g.setColor(Color.BLUE);
 			}
@@ -107,7 +108,7 @@ public class Cell extends JPanel {
 		}
 
 		if (MazeGenerator.getSolveMode()) {
-			g.setColor(Color.ORANGE);
+			g.setColor(solution);
 		} else {
 			g.setColor(Color.BLUE);
 		}
