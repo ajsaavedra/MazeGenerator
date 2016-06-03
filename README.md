@@ -5,10 +5,6 @@ or instantly see a solution.
 ##Building
 This project repo is ready to be used from Eclipse.
 
-To use Eclipse, install Eclipse and the Java JDK (if you haven't already, see
-https://eclipse.org/downloads/  and http://www.oracle.com/technetwork/java/javase/downloads/index.html for more details), and
-then start Eclipse.
-
 In Eclipse go to: File/New/Java Project
 
 Un-check "Use default location" and then click Browse and navigate to the top level directory with contains your source, libs, configs, etc.  
