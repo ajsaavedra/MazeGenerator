@@ -6,7 +6,7 @@ or instantly see a solution.
 This project repo is ready to be used from Eclipse.
 
 To use Eclipse, install Eclipse and the Java JDK (if you haven't already, see
-https://eclipse.org/downloads/  and http://www.oracle.com/technetwork/java/javase/downloads/index.html for more details)
+https://eclipse.org/downloads/  and http://www.oracle.com/technetwork/java/javase/downloads/index.html for more details), and
 then start Eclipse.
 
 In Eclipse go to: File/New/Java Project
