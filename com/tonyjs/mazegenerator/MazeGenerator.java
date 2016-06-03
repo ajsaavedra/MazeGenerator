@@ -23,8 +23,8 @@ import javax.swing.UIManager;
 public class MazeGenerator extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private TitleLabel titleLabel = new TitleLabel("Maze");
-	private static int rows = 30;
-	private static int cols = 30;
+	private static int rows = 35;
+	private static int cols = 35;
 	private static Cell[][] cell = new Cell[rows][cols];
 	private static JPanel mazePanel = new JPanel();
 	private static int currentRow, currentCol;
@@ -124,7 +124,7 @@ public class MazeGenerator extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String seconds = Integer.toString(elapsedSeconds);
-				if (GAME_OVER || GAME_IS_WON) {
+				if (GAME_OVER || GAME_IS_WON || !GAME_START) {
 					timer.stop();
 				} else if (elapsedSeconds == 0) {
 					timer.stop();
@@ -132,8 +132,8 @@ public class MazeGenerator extends JFrame {
 					getGameState();
 				} else {
 					--elapsedSeconds;
+					timerL.setText("Time: " + seconds);
 				}
-				timerL.setText("Time: " + seconds);
 			}
 		});
 		timer.start();
