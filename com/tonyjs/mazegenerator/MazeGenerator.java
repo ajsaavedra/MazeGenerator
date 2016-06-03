@@ -20,15 +20,19 @@ import javax.swing.UIManager;
 public class MazeGenerator extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private TitleLabel titleLabel = new TitleLabel("Maze");
-	private int rows = 30;
-	private int cols = 30;
-	private Cell[][] cell = new Cell[rows][cols];
-	private JPanel mazePanel = new JPanel();
-	private int currentRow;
-	private int currentCol;
-	private int endRow = rows - 1;
-	private int endCol = cols - 1;
-	private boolean gameIsWon;
+	private static int rows = 30;
+	private static int cols = 30;
+	private static Cell[][] cell = new Cell[rows][cols];
+	private static JPanel mazePanel = new JPanel();
+	private static int currentRow;
+	private static int currentCol;
+	private static int endRow = rows - 1;
+	private static int endCol = cols - 1;
+	private static boolean gameIsWon;
+	private static boolean solveMode;
+	private boolean notFound;
+	private JButton newMazeButton;
+	private static JButton solveMaze;
 
 	public MazeGenerator() {
 		initGUI();
@@ -51,21 +55,33 @@ public class MazeGenerator extends JFrame {
 		// maze panel
 		newMaze();
 		centerPanel.add(mazePanel);
-		
+
 		//button panel
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setBackground(Color.BLACK);
 		add(buttonPanel, BorderLayout.PAGE_END);
-		
-		JButton newMazeButton = new JButton("New Maze");
+
+		newMazeButton = new JButton("New Maze");
+		solveMaze = new JButton("Solve Maze");
 		newMazeButton.setFocusable(false);
 		newMazeButton.addActionListener(new ActionListener() {
-			public void actionPerformed( ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				newMaze();
+				solveMaze.setEnabled(true);
 			}
 		});
 		buttonPanel.add(newMazeButton);
-		
+
+		solveMaze.setFocusable(false);
+		solveMaze.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				solveMode = true;
+				solveAndDrawMaze();
+				solveMaze.setEnabled(false);
+			}
+		});
+		buttonPanel.add(solveMaze);
+
 		// listeners
 		addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
@@ -80,6 +96,8 @@ public class MazeGenerator extends JFrame {
 	public void newMaze() {
 		mazePanel.removeAll();
 		gameIsWon = false;
+		solveMode = false;
+		notFound = true;
 		mazePanel.setLayout(new GridLayout(rows, cols));
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
@@ -88,7 +106,7 @@ public class MazeGenerator extends JFrame {
 			}
 		}
 		generateMaze();
-		
+
 		currentRow = 0;
 		currentCol = 0;
 		endRow = rows - 1;
@@ -157,8 +175,8 @@ public class MazeGenerator extends JFrame {
 		}
 		return available;
 	}
-	
-	public void moveTo(int nextRow, int nextCol, int firstDirection, int secondDirection) {
+
+	public static void moveTo(int nextRow, int nextCol, int firstDirection, int secondDirection) {
 		cell[currentRow][currentCol].setCurrent(false);
 		cell[currentRow][currentCol].addPath(firstDirection);
 		currentRow = nextRow;
@@ -166,8 +184,8 @@ public class MazeGenerator extends JFrame {
 		cell[currentRow][currentCol].setCurrent(true);
 		cell[currentRow][currentCol].addPath(secondDirection);
 	}
-	
-	private void moveBall(int direction) {
+
+	private static void moveBall(int direction) {
 		switch (direction) {
 		case 38: // up
 			if (!cell[currentRow][currentCol].isWall(0)) {
@@ -218,11 +236,142 @@ public class MazeGenerator extends JFrame {
 			}
 			break;
 		}
-		
+
 		if (currentRow == endRow && currentCol == endCol) {
-			JOptionPane.showMessageDialog(mazePanel, "You Win! Play Again?");
+			if (!solveMode) {
+				JOptionPane.showMessageDialog(mazePanel, "You Win! Play Again?");
+				solveMaze.setEnabled(false);
+			}
 			gameIsWon = true;
 		}
+	}
+
+	public void solveAndDrawMaze() {
+		int[][] table = new int[rows][cols];
+		currentCol = 0; 
+		currentRow = 0;
+		lookupMazeSolution(table, currentCol, currentRow, true, true, true, true);
+		drawOutSolution(table, false, true, false, true);
+	}
+
+	public int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol, boolean steppedUp,
+			boolean steppedDown, boolean steppedRight, boolean steppedLeft) {
+
+		int stepUp = 0;
+		int stepDown = 0;
+		int stepRight = 0;
+		int stepLeft = 0;
+
+		if (currentTableRow == endRow && currentTableCol == endCol) {
+			notFound = false;
+			table[currentTableRow][currentTableCol] = 100;
+			return table[currentTableRow][currentTableCol];
+		} else {
+			if (!cell[currentTableRow][currentTableCol].isWall(0) && (steppedRight || steppedLeft || !steppedDown) && notFound) {
+				stepUp = lookupMazeSolution(table, currentTableRow - 1, currentTableCol, true, false, false, false);
+			}
+			if (!cell[currentTableRow][currentTableCol].isWall(1) && (steppedUp || !steppedLeft || steppedDown) && notFound) {
+				stepRight = lookupMazeSolution(table, currentTableRow, currentTableCol + 1, false, false, true, false);
+			}
+			if (!cell[currentTableRow][currentTableCol].isWall(2) && (steppedRight || steppedLeft || !steppedUp) && notFound) {
+				stepDown = lookupMazeSolution(table, currentTableRow + 1, currentTableCol, false, true, false, false);
+			}
+			if (!cell[currentTableRow][currentTableCol].isWall(3) && (!steppedRight || steppedUp || steppedDown) && notFound) {
+				stepLeft = lookupMazeSolution(table, currentTableRow, currentTableCol - 1, false, false, false, true);
+			} 
+
+			table[currentTableRow][currentTableCol] = Math.max(Math.max(stepUp, stepDown), Math.max(stepRight, stepLeft));
+			return table[currentTableRow][currentTableCol];
+		}
+
+	}
+
+	public void drawOutSolution(int[][] solution, boolean up, boolean down, boolean left, boolean right) {		
+		int upValue = 0;
+		int downValue = 0;
+		int leftValue = 0;
+		int rightValue = 0;
+
+		Cell location = cell[currentRow][currentCol];
+
+		if (!location.isWall(0) && !down) {
+			upValue = solution[location.getRow()-1][location.getCol()];
+		}
+		if (!location.isWall(1) && !left) {
+			rightValue = solution[location.getRow()][location.getCol()+1];
+		}
+		if (!location.isWall(2) && !up) {
+			downValue = solution[location.getRow()+1][location.getCol()];
+		}
+		if (!location.isWall(3) && !right) {
+			leftValue = solution[location.getRow()][location.getCol()-1];
+		}
+
+		if (up) {// if just moved up don't allow to move back down
+			if (upValue > rightValue && upValue > leftValue) {// move up
+				moveUp();
+				drawOutSolution(solution, true, false, false, false);
+			} else if (rightValue > leftValue) {// move right
+				moveRight();
+				drawOutSolution(solution, false, false, false, true);
+			} else if (leftValue > rightValue) {// move left
+				moveLeft();
+				drawOutSolution(solution, false, false, true, false);
+			}
+		} else if (down) {// if just moved down don't allow to move back up
+			if (downValue > rightValue && downValue > leftValue) {// move down
+				moveDown();
+				drawOutSolution(solution, false, true, false, false);
+			} else if (rightValue > leftValue) {// move right
+				moveRight();
+				drawOutSolution(solution, false, false, false, true);
+			} else if (leftValue > rightValue) {// move left
+				moveLeft();
+				drawOutSolution(solution, false, false, true, false);
+			}
+		} else if (left) {// if just moved left, don't move back right
+			if (downValue > upValue && downValue > leftValue) {//move down
+				moveDown();
+				drawOutSolution(solution, false, true, false, false);
+			} else if (upValue > leftValue) {// move up
+				moveUp();
+				drawOutSolution(solution, true, false, false, false);
+			} else if (leftValue > upValue) {// move left
+				moveLeft();
+				drawOutSolution(solution, false, false, true, false);
+			}
+		} else if (right) {// if just moved right, don't move back left
+			if (downValue > rightValue && downValue > upValue) {// move down
+				moveDown();
+				drawOutSolution(solution, false, true, false, false);
+			} else if (upValue > rightValue) {// move up
+				moveUp();
+				drawOutSolution(solution, true, false, false, false);
+			} else if (rightValue > upValue) {// move right
+				moveRight();
+				drawOutSolution(solution, false, false, false, true);
+			}
+		}
+	}
+
+	public static void moveUp() {
+		moveBall(38);
+	}
+
+	public static void moveDown() {
+		moveBall(40);
+	}
+
+	public static void moveLeft() {
+		moveBall(37);
+	}
+
+	public static void moveRight() {
+		moveBall(39);
+	}
+	
+	public static boolean getSolveMode() {
+		return solveMode;
 	}
 
 	public static void main(String[] args) {

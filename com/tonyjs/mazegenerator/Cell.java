@@ -95,14 +95,22 @@ public class Cell extends JPanel {
 			g.drawLine(0, 0, 0, SIZE);
 		}
 		if (current) {
-			g.setColor(Color.BLUE);
+			if (MazeGenerator.getSolveMode()) {
+				g.setColor(Color.ORANGE);
+			} else {
+				g.setColor(Color.BLUE);
+			}
 			g.fillOval(3, 3, SIZE-6, SIZE-6);
 		} else if (end) {
 			g.setColor(Color.RED);
 			g.fillOval(3, 3, SIZE-6, SIZE-6);
 		}
 
-		g.setColor(Color.BLUE);
+		if (MazeGenerator.getSolveMode()) {
+			g.setColor(Color.ORANGE);
+		} else {
+			g.setColor(Color.BLUE);
+		}
 
 		if (path[TOP]) {
 			drawDashedLine(g, SIZE/2, 0, SIZE/2, SIZE/2);
