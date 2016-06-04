@@ -2,6 +2,10 @@
 A simple timed game that randomly generates a new maze each time. Players can either try to solve the maze on time and win the game
 or instantly see a solution.
 
+Seeing a solution comes in two forms: if you lose the game, you can view the solution that gets you out of the maze from the starting point.
+
+If you get lost, and want to simply see the solution, the solution will lead you out of the maze from your current position.
+
 ##Building
 This project repo is ready to be used from Eclipse.
 
