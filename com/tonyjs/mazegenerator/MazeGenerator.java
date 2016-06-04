@@ -89,8 +89,8 @@ public class MazeGenerator extends JFrame {
 		solveMaze.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SOLVE_MODE = true;
-				GAME_OVER = true;
 				solveAndDrawMaze();
+				GAME_OVER = true;
 				solveMaze.setEnabled(false);
 			}
 		});
@@ -120,7 +120,7 @@ public class MazeGenerator extends JFrame {
 
 	public static void startTimer() {
 		timer = new Timer(1000, new ActionListener() {
-			int elapsedSeconds = 89;
+			int elapsedSeconds = 90;
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String seconds = Integer.toString(elapsedSeconds);
@@ -138,13 +138,13 @@ public class MazeGenerator extends JFrame {
 		});
 		timer.start();
 	}
-	
+
 	public static void setGameStates() {
 		GAME_START = false;
 		GAME_IS_WON = false;
 		GAME_OVER = true;
 	}
-	
+
 	public static void resetGameStates() {
 		GAME_OVER = false;
 		GAME_IS_WON = false;
@@ -336,7 +336,7 @@ public class MazeGenerator extends JFrame {
 			}
 		}
 	}
-	
+
 	public static void showWinningMessage() {
 		Object[] options = {"Play Again", "Exit Game"};
 		int n = JOptionPane.showOptionDialog(container,
@@ -362,14 +362,18 @@ public class MazeGenerator extends JFrame {
 
 	public static void solveAndDrawMaze() {
 		int[][] table = new int[rows][cols];
-		currentCol = 0; 
-		currentRow = 0;
-		lookupMazeSolution(table, currentCol, currentRow, true, true, true, true);
-		drawOutSolution(table, false, true, false, true);
+		if (GAME_OVER) {
+			lookupMazeSolution(table, 0, 0, true, true, true, true);
+			drawOutSolution(table, false, true, false, true);
+		} else {
+			lookupMazeSolution(table, currentRow, currentCol, true, true, true, true);
+			drawOutSolution(table, cell[currentRow][currentCol].isWall(2), cell[currentRow][currentCol].isWall(0),
+					cell[currentRow][currentCol].isWall(1), cell[currentRow][currentCol].isWall(3));
+		}
 	}
 
-	public static int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol, boolean steppedUp,
-			boolean steppedDown, boolean steppedRight, boolean steppedLeft) {
+	public static int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol,
+			boolean steppedUp, boolean steppedDown, boolean steppedRight, boolean steppedLeft) {
 
 		int stepUp = 0;
 		int stepDown = 0;
@@ -381,16 +385,20 @@ public class MazeGenerator extends JFrame {
 			table[currentTableRow][currentTableCol] = 100;
 			return table[currentTableRow][currentTableCol];
 		} else {
-			if (!cell[currentTableRow][currentTableCol].isWall(0) && (steppedRight || steppedLeft || !steppedDown) && NOT_FOUND) {
+			if (!cell[currentTableRow][currentTableCol].isWall(0) && NOT_FOUND &&
+					(steppedRight || steppedLeft || !steppedDown)) {
 				stepUp = lookupMazeSolution(table, currentTableRow - 1, currentTableCol, true, false, false, false);
 			}
-			if (!cell[currentTableRow][currentTableCol].isWall(1) && (steppedUp || !steppedLeft || steppedDown) && NOT_FOUND) {
+			if (!cell[currentTableRow][currentTableCol].isWall(1) && NOT_FOUND &&
+					(steppedUp || !steppedLeft || steppedDown)) {
 				stepRight = lookupMazeSolution(table, currentTableRow, currentTableCol + 1, false, false, true, false);
 			}
-			if (!cell[currentTableRow][currentTableCol].isWall(2) && (steppedRight || steppedLeft || !steppedUp) && NOT_FOUND) {
+			if (!cell[currentTableRow][currentTableCol].isWall(2) && NOT_FOUND &&
+					(steppedRight || steppedLeft || !steppedUp) ) {
 				stepDown = lookupMazeSolution(table, currentTableRow + 1, currentTableCol, false, true, false, false);
 			}
-			if (!cell[currentTableRow][currentTableCol].isWall(3) && (!steppedRight || steppedUp || steppedDown) && NOT_FOUND) {
+			if (!cell[currentTableRow][currentTableCol].isWall(3) && NOT_FOUND &&
+					(!steppedRight || steppedUp || steppedDown)) {
 				stepLeft = lookupMazeSolution(table, currentTableRow, currentTableCol - 1, false, false, false, true);
 			} 
 
@@ -492,7 +500,9 @@ public class MazeGenerator extends JFrame {
 		try {
 			String className = UIManager.getCrossPlatformLookAndFeelClassName();
 			UIManager.setLookAndFeel(className);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
