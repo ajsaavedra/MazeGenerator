@@ -5,13 +5,13 @@ or instantly see a solution.
 ##Building
 This project repo is ready to be used from Eclipse.
 
-In Eclipse go to: File/New/Java Project
+In Eclipse go to: File/New/Project. Select Java.
 
-Un-check "Use default location" and then click Browse and navigate to the top level directory with contains your source, libs, configs, etc.  
+Un-check "Use default location" and then click Browse and navigate to the top level directory with contains your source, libs, configs, etc.
 
-Eclipse will display a warning that says that your project "overlaps the location of another project".  
+Eclipse will display a warning that says that your project "overlaps the location of another project".
 
-Give your project the directory name, and now Eclipse will let you click on the "Next" button to continue configuration of your project.  
+Re-select "Use default location," and now Eclipse will let you click on the "Next" button to continue configuration of your project.
 
 ##Playing
 The object of the game is to get from one end to the next.  
