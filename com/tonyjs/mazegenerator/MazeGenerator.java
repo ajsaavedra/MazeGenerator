@@ -173,7 +173,9 @@ public class MazeGenerator extends JFrame {
 				break;
 			case 1:
 				SOLVE_MODE = true;
+				GAME_OVER = false;
 				solveAndDrawMaze();
+				GAME_OVER = true;
 				solveMaze.setEnabled(false);
 				break;
 			case 2:
@@ -432,50 +434,66 @@ public class MazeGenerator extends JFrame {
 		if (up) {// if just moved up don't allow to move back down
 			if (upValue > rightValue && upValue > leftValue) {// move up
 				moveUp();
-				drawOutSolution(solution, true, false, false, false);
+				drawUp(solution);
 			} else if (rightValue > leftValue) {// move right
 				moveRight();
-				drawOutSolution(solution, false, false, false, true);
+				drawRight(solution);
 			} else if (leftValue > rightValue) {// move left
 				moveLeft();
-				drawOutSolution(solution, false, false, true, false);
+				drawLeft(solution);
 			}
 		} else if (down) {// if just moved down don't allow to move back up
 			if (downValue > rightValue && downValue > leftValue) {// move down
 				moveDown();
-				drawOutSolution(solution, false, true, false, false);
+				drawDown(solution);
 			} else if (rightValue > leftValue) {// move right
 				moveRight();
-				drawOutSolution(solution, false, false, false, true);
+				drawRight(solution);
 			} else if (leftValue > rightValue) {// move left
 				moveLeft();
-				drawOutSolution(solution, false, false, true, false);
+				drawLeft(solution);
 			}
 		} else if (left) {// if just moved left, don't move back right
 			if (downValue > upValue && downValue > leftValue) {//move down
 				moveDown();
-				drawOutSolution(solution, false, true, false, false);
+				drawDown(solution);
 			} else if (upValue > leftValue) {// move up
 				moveUp();
-				drawOutSolution(solution, true, false, false, false);
+				drawUp(solution);
 			} else if (leftValue > upValue) {// move left
 				moveLeft();
-				drawOutSolution(solution, false, false, true, false);
+				drawLeft(solution);
 			}
 		} else if (right) {// if just moved right, don't move back left
 			if (downValue > rightValue && downValue > upValue) {// move down
 				moveDown();
-				drawOutSolution(solution, false, true, false, false);
+				drawDown(solution);
 			} else if (upValue > rightValue) {// move up
 				moveUp();
-				drawOutSolution(solution, true, false, false, false);
+				drawUp(solution);
 			} else if (rightValue > upValue) {// move right
 				moveRight();
-				drawOutSolution(solution, false, false, false, true);
+				drawRight(solution);
 			}
 		}
 	}
+	
+	public static void drawDown(int[][] solution) {
+		drawOutSolution(solution, false, true, false, false);
+	}
 
+	public static void drawUp(int[][] solution) {
+		drawOutSolution(solution, true, false, false, false);
+	}
+	
+	public static void drawLeft(int[][] solution) {
+		drawOutSolution(solution, false, false, true, false);
+	}
+	
+	public static void drawRight(int[][] solution) {
+		drawOutSolution(solution, false, false, false, true);
+	}
+	
 	public static void moveUp() {
 		moveBall(38);
 	}
