@@ -96,7 +96,7 @@ public class Cell extends JPanel {
 			g.drawLine(0, 0, 0, SIZE);
 		}
 		if (current) {
-			if (MazeGenerator.getSolveMode()) {
+			if (MazeSolver.getSolveMode()) {
 				g.setColor(solution);
 			} else {
 				g.setColor(Color.BLUE);
@@ -107,7 +107,7 @@ public class Cell extends JPanel {
 			g.fillOval(3, 3, SIZE-6, SIZE-6);
 		}
 
-		if (MazeGenerator.getSolveMode()) {
+		if (MazeSolver.getSolveMode()) {
 			g.setColor(solution);
 		} else {
 			g.setColor(Color.BLUE);
