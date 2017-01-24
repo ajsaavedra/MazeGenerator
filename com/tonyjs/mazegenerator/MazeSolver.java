@@ -142,6 +142,7 @@ public class MazeSolver {
                     solution[realRow][realCol] = 0;
                     currentRow = realRow;
                     currentCol = realCol;
+                    break;
                 }
             }
         }
