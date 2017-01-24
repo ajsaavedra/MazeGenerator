@@ -8,50 +8,56 @@ public class MazeSolver {
     private int cols;
     private int endRow;
     private int endCol;
+    private int UP, DOWN, LEFT, RIGHT, NONE;
     private boolean GAME_OVER, GAME_START, GAME_IS_WON;
     private static boolean SOLVE_MODE;
     private boolean NOT_FOUND;
-    
+
     public MazeSolver(Cell[][] cell, int rows, int cols) {
         this.cell = cell;
         this.rows = rows;
         this.cols = cols;
         this.endRow = rows - 1;
         this.endCol = cols - 1;
+        this.UP = 1;
+        this.DOWN = 2;
+        this.RIGHT = 3;
+        this.LEFT = 4;
+        this.NONE = 0;
     }
-    
+
     public void setSolveMode(boolean b) {
         SOLVE_MODE = b;
     }
-    
+
     public void setGameOver(boolean b) {
         GAME_OVER = b;
     }
-    
+
     public void setGameWon(boolean b) {
         GAME_IS_WON = b;
     }
-    
+
     public void setGameStart(boolean b) {
         GAME_START = b;
     }
-    
+
     public boolean isGameOver() {
         return GAME_OVER;
     }
-    
+
     public boolean isGameWon() {
         return GAME_IS_WON;
     }
-    
+
     public static boolean getSolveMode() {
         return SOLVE_MODE;
     }
-    
+
     public boolean isGameStart() {
         return GAME_START;
     }
-    
+
     public void setGameStates() {
         GAME_START = false;
         GAME_IS_WON = false;
@@ -69,17 +75,16 @@ public class MazeSolver {
     public void solveAndDrawMaze() {
         int[][] table = new int[rows][cols];
         if (GAME_OVER) {
-            lookupMazeSolution(table, 0, 0, true, true, true, true);
+            lookupMazeSolution(table, 0, 0, NONE);
             drawOutSolution(table, false, true, false, true);
         } else {
-            lookupMazeSolution(table, currentRow, currentCol, true, true, true, true);
+            lookupMazeSolution(table, currentRow, currentCol, NONE);
             drawOutSolution(table, cell[currentRow][currentCol].isWall(2), cell[currentRow][currentCol].isWall(0),
                     cell[currentRow][currentCol].isWall(1), cell[currentRow][currentCol].isWall(3));
         }
     }
 
-    public int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol,
-            boolean steppedUp, boolean steppedDown, boolean steppedRight, boolean steppedLeft) {
+    public int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol, int direction) {
 
         int stepUp = 0;
         int stepDown = 0;
@@ -90,29 +95,29 @@ public class MazeSolver {
             NOT_FOUND = false;
             table[currentTableRow][currentTableCol] = 100;
             return table[currentTableRow][currentTableCol];
-        } else {
-            if (!cell[currentTableRow][currentTableCol].isWall(0) && NOT_FOUND &&
-                    (steppedRight || steppedLeft || !steppedDown)) {
-                stepUp = lookupMazeSolution(table, currentTableRow - 1, currentTableCol, true, false, false, false);
+        } else if (NOT_FOUND) {
+            if (!cell[currentTableRow][currentTableCol].isWall(0) &&
+                    (direction != DOWN)) {
+                stepUp = lookupMazeSolution(table, currentTableRow - 1, currentTableCol, UP);
             }
-            if (!cell[currentTableRow][currentTableCol].isWall(1) && NOT_FOUND &&
-                    (steppedUp || !steppedLeft || steppedDown)) {
-                stepRight = lookupMazeSolution(table, currentTableRow, currentTableCol + 1, false, false, true, false);
+            if (!cell[currentTableRow][currentTableCol].isWall(1) &&
+                    (direction != LEFT)) {
+                stepRight = lookupMazeSolution(table, currentTableRow, currentTableCol + 1, RIGHT);
             }
-            if (!cell[currentTableRow][currentTableCol].isWall(2) && NOT_FOUND &&
-                    (steppedRight || steppedLeft || !steppedUp) ) {
-                stepDown = lookupMazeSolution(table, currentTableRow + 1, currentTableCol, false, true, false, false);
+            if (!cell[currentTableRow][currentTableCol].isWall(2) &&
+                    (direction != UP)) {
+                stepDown = lookupMazeSolution(table, currentTableRow + 1, currentTableCol, DOWN);
             }
-            if (!cell[currentTableRow][currentTableCol].isWall(3) && NOT_FOUND &&
-                    (!steppedRight || steppedUp || steppedDown)) {
-                stepLeft = lookupMazeSolution(table, currentTableRow, currentTableCol - 1, false, false, false, true);
-            } 
-
-            table[currentTableRow][currentTableCol] = Math.max(Math.max(stepUp, stepDown), Math.max(stepRight, stepLeft));
-            return table[currentTableRow][currentTableCol];
+            if (!cell[currentTableRow][currentTableCol].isWall(3) &&
+                    (direction != RIGHT)) {
+                stepLeft = lookupMazeSolution(table, currentTableRow, currentTableCol - 1, LEFT);
+            }
         }
 
+        table[currentTableRow][currentTableCol] = Math.max(Math.max(stepUp, stepDown), Math.max(stepRight, stepLeft));
+        return table[currentTableRow][currentTableCol];
     }
+
 
     public void drawOutSolution(int[][] solution, boolean up, boolean down, boolean left, boolean right) {       
         int upValue = 0;
@@ -181,7 +186,7 @@ public class MazeSolver {
             }
         }
     }
-    
+
     public void drawDown(int[][] solution) {
         drawOutSolution(solution, false, true, false, false);
     }
@@ -189,15 +194,15 @@ public class MazeSolver {
     public void drawUp(int[][] solution) {
         drawOutSolution(solution, true, false, false, false);
     }
-    
+
     public void drawLeft(int[][] solution) {
         drawOutSolution(solution, false, false, true, false);
     }
-    
+
     public void drawRight(int[][] solution) {
         drawOutSolution(solution, false, false, false, true);
     }
-    
+
     public void moveUp() {
         moveBall(38);
     }
@@ -213,7 +218,7 @@ public class MazeSolver {
     public void moveRight() {
         moveBall(39);
     }
-    
+
     public void moveBall(int direction) {
         switch (direction) {
         case 38: // up
@@ -266,7 +271,7 @@ public class MazeSolver {
             break;
         }
     }
-    
+
     public boolean isWon() {
         if (currentRow == endRow && currentCol == endCol) {
             GAME_OVER = true;
@@ -276,7 +281,7 @@ public class MazeSolver {
         }
         return false;
     }
-    
+
     public void moveTo(int nextRow, int nextCol, int firstDirection, int secondDirection) {
         cell[currentRow][currentCol].setCurrent(false);
         cell[currentRow][currentCol].addPath(firstDirection);
