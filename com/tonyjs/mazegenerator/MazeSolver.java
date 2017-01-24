@@ -178,31 +178,15 @@ public class MazeSolver {
 
     public void moveAndDraw(int direction) {
         if (direction == UP) {
-            moveUp();
+            moveBall(38);
         } else if (direction == RIGHT) {
-            moveRight();
+            moveBall(39);
         } else if (direction == DOWN) {
-            moveDown();
+            moveBall(40);
         } else {
-            moveLeft();
+            moveBall(37);
         }
         drawOutSolution(direction);
-    }
-
-    public void moveUp() {
-        moveBall(38);
-    }
-
-    public void moveDown() {
-        moveBall(40);
-    }
-
-    public void moveLeft() {
-        moveBall(37);
-    }
-
-    public void moveRight() {
-        moveBall(39);
     }
 
     public void moveBall(int direction) {
