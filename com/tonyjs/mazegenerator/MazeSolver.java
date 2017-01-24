@@ -93,12 +93,7 @@ public class MazeSolver {
             NOT_FOUND = false;
             table[currentTableRow][currentTableCol] = 100;
             return table[currentTableRow][currentTableCol];
-        } else if (NOT_FOUND && currentTableRow >= 0 && currentTableCol >= 0 && currentTableRow < rows && currentTableCol < cols) {
-//            table[currentTableRow][currentTableCol] = Math.max(
-//                    Math.max(lookupMazeSolution(table, currentTableRow - 1, currentTableCol, UP),
-//                            lookupMazeSolution(table, currentTableRow + 1, currentTableCol, DOWN)), 
-//                    Math.max(lookupMazeSolution(table, currentTableRow, currentTableCol + 1, RIGHT),
-//                            lookupMazeSolution(table, currentTableRow, currentTableCol - 1, LEFT)));
+        } else if (NOT_FOUND) {
             if (!cell[currentTableRow][currentTableCol].isWall(0) &&
                     (direction != DOWN)) {
                 stepUp = lookupMazeSolution(table, currentTableRow - 1, currentTableCol, UP);
@@ -121,59 +116,34 @@ public class MazeSolver {
         return table[currentTableRow][currentTableCol];
     }
 
-
-    public void drawOutSolution(int direction) {       
-        int upValue = 0;
-        int downValue = 0;
-        int leftValue = 0;
-        int rightValue = 0;
-
-        Cell location = cell[currentRow][currentCol];
-
-        if (!location.isWall(UP) && direction != DOWN) {
-            upValue = solution[location.getRow()-1][location.getCol()];
-        }
-        if (!location.isWall(RIGHT) && direction != LEFT) {
-            rightValue = solution[location.getRow()][location.getCol()+1];
-        }
-        if (!location.isWall(DOWN) && direction != UP) {
-            downValue = solution[location.getRow()+1][location.getCol()];
-        }
-        if (!location.isWall(LEFT) && direction != RIGHT) {
-            leftValue = solution[location.getRow()][location.getCol()-1];
-        }
-
-        if (direction == UP) {// if just moved up don't allow to move back down
-            if (upValue > rightValue && upValue > leftValue) {// move up
-                moveAndDraw(UP);
-            } else if (rightValue > leftValue) {// move right
-                moveAndDraw(RIGHT);
-            } else if (leftValue > rightValue) {// move left
-                moveAndDraw(LEFT);
-            }
-        } else if (direction == DOWN) {// if just moved down don't allow to move back up
-            if (downValue > rightValue && downValue > leftValue) {// move down
-                moveAndDraw(DOWN);
-            } else if (rightValue > leftValue) {// move right
-                moveAndDraw(RIGHT);
-            } else if (leftValue > rightValue) {// move left
-                moveAndDraw(LEFT);
-            }
-        } else if (direction == LEFT) {// if just moved left, don't move back right
-            if (downValue > upValue && downValue > leftValue) {//move down
-                moveAndDraw(DOWN);
-            } else if (upValue > leftValue) {// move up
-                moveAndDraw(UP);
-            } else if (leftValue > upValue) {// move left
-                moveAndDraw(LEFT);
-            }
-        } else {// if just moved right, don't move back left
-            if (downValue > rightValue && downValue > upValue) {// move down
-                moveAndDraw(DOWN);
-            } else if (upValue > rightValue) {// move up
-                moveAndDraw(UP);
-            } else if (rightValue > upValue) {// move right
-                moveAndDraw(RIGHT);
+    public void drawOutSolution(int direction) {  
+        while (currentRow < endRow || currentCol < endCol) {
+            Cell location = cell[currentRow][currentCol];
+            boolean[] path = location.getWalls();
+            int realRow = currentRow;
+            int realCol = currentCol;
+            for (int i = 0; i < path.length; i++) {
+                if (!location.isWall(i)) {
+                    if (i == UP) {
+                        realRow = location.getRow()-1;
+                        realCol = location.getCol();
+                    } else if (i == DOWN) {
+                        realRow = location.getRow()+1;
+                        realCol = location.getCol();
+                    } else if (i == RIGHT) {
+                        realRow = location.getRow();
+                        realCol = location.getCol()+1;
+                    } else if (i == LEFT){
+                        realRow = location.getRow();
+                        realCol = location.getCol()-1;
+                    }
+                }
+                if (solution[realRow][realCol] == 100) {
+                    moveAndDraw(i);
+                    solution[realRow][realCol] = 0;
+                    currentRow = realRow;
+                    currentCol = realCol;
+                }
             }
         }
     }
@@ -188,7 +158,6 @@ public class MazeSolver {
         } else {
             moveBall(37);
         }
-        drawOutSolution(direction);
     }
 
     public void moveBall(int direction) {
