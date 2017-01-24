@@ -43,16 +43,6 @@ public class MazeGenerator extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-	public MazeGenerator(boolean b) {}
-	
-	public int getRows() {
-	    return rows;
-	}
-
-	public int getCols() {
-	    return cols;
-	}
-
 	public void initGUI() {
 		// center panel
 		JPanel centerPanel = new JPanel();
