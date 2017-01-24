@@ -27,3 +27,5 @@ To start the game, simply press the start button.
 
 Every turn the player makes, a blue trail
 shows where they've been. Should the user give up or wish to see the solution, a purple, dashed trail will delineate this.
+
+<img src="./images/solved_maze.png" width="550" height="600" />
