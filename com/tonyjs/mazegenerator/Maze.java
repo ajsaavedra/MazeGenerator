@@ -5,17 +5,21 @@ import java.util.Random;
 
 public class Maze {
     private Cell[][] cell;
-    private MazeGenerator mg = new MazeGenerator(true);
-    private int rows = mg.getRows();
-    private int cols = mg.getCols();
-    private Random rand = new Random();
-    private int row = rand.nextInt(rows);
-    private int col = rand.nextInt(cols);
+    private int rows;
+    private int cols;
+    private Random rand;
+    private int row;
+    private int col;
     private int visitedCells = 1;
     private ArrayList<Cell> savedCells = new ArrayList<Cell>();
     
-    public Maze(Cell[][] cell) {
+    public Maze(Cell[][] cell, int rows, int cols) {
         this.cell = cell;
+        this.rows = rows;
+        this.cols = cols;
+        this.rand = new Random();
+        this.row = rand.nextInt(rows);
+        this.col = rand.nextInt(cols);
     }
     
     public void carveOutMaze() {

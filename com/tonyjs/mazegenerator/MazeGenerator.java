@@ -205,7 +205,7 @@ public class MazeGenerator extends JFrame {
 	}
 
 	private static void generateMaze() {
-		Maze maze = new Maze(cell);
+		Maze maze = new Maze(cell, rows, cols);
 		maze.carveOutMaze();
 	}
 
