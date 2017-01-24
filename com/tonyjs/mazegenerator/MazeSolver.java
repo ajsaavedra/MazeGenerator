@@ -12,6 +12,7 @@ public class MazeSolver {
     private boolean GAME_OVER, GAME_START, GAME_IS_WON;
     private static boolean SOLVE_MODE;
     private boolean NOT_FOUND;
+    private int[][] solution;
 
     public MazeSolver(Cell[][] cell, int rows, int cols) {
         this.cell = cell;
@@ -19,11 +20,11 @@ public class MazeSolver {
         this.cols = cols;
         this.endRow = rows - 1;
         this.endCol = cols - 1;
-        this.UP = 1;
+        this.UP = 0;
+        this.RIGHT = 1;
         this.DOWN = 2;
-        this.RIGHT = 3;
-        this.LEFT = 4;
-        this.NONE = 0;
+        this.LEFT = 3;
+        this.NONE = 4;
     }
 
     public void setSolveMode(boolean b) {
@@ -76,16 +77,16 @@ public class MazeSolver {
         int[][] table = new int[rows][cols];
         if (GAME_OVER) {
             lookupMazeSolution(table, 0, 0, NONE);
-            drawOutSolution(table, false, true, false, true);
+            solution = table;
+            drawOutSolution(NONE);
         } else {
             lookupMazeSolution(table, currentRow, currentCol, NONE);
-            drawOutSolution(table, cell[currentRow][currentCol].isWall(2), cell[currentRow][currentCol].isWall(0),
-                    cell[currentRow][currentCol].isWall(1), cell[currentRow][currentCol].isWall(3));
+            solution = table;
+            drawOutSolution(NONE);
         }
     }
 
     public int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol, int direction) {
-
         int stepUp = 0;
         int stepDown = 0;
         int stepRight = 0;
@@ -119,7 +120,7 @@ public class MazeSolver {
     }
 
 
-    public void drawOutSolution(int[][] solution, boolean up, boolean down, boolean left, boolean right) {       
+    public void drawOutSolution(int direction) {       
         int upValue = 0;
         int downValue = 0;
         int leftValue = 0;
@@ -127,80 +128,65 @@ public class MazeSolver {
 
         Cell location = cell[currentRow][currentCol];
 
-        if (!location.isWall(0) && !down) {
+        if (!location.isWall(UP) && direction != DOWN) {
             upValue = solution[location.getRow()-1][location.getCol()];
         }
-        if (!location.isWall(1) && !left) {
+        if (!location.isWall(RIGHT) && direction != LEFT) {
             rightValue = solution[location.getRow()][location.getCol()+1];
         }
-        if (!location.isWall(2) && !up) {
+        if (!location.isWall(DOWN) && direction != UP) {
             downValue = solution[location.getRow()+1][location.getCol()];
         }
-        if (!location.isWall(3) && !right) {
+        if (!location.isWall(LEFT) && direction != RIGHT) {
             leftValue = solution[location.getRow()][location.getCol()-1];
         }
 
-        if (up) {// if just moved up don't allow to move back down
+        if (direction == UP) {// if just moved up don't allow to move back down
             if (upValue > rightValue && upValue > leftValue) {// move up
-                moveUp();
-                drawUp(solution);
+                moveAndDraw(UP);
             } else if (rightValue > leftValue) {// move right
-                moveRight();
-                drawRight(solution);
+                moveAndDraw(RIGHT);
             } else if (leftValue > rightValue) {// move left
-                moveLeft();
-                drawLeft(solution);
+                moveAndDraw(LEFT);
             }
-        } else if (down) {// if just moved down don't allow to move back up
+        } else if (direction == DOWN) {// if just moved down don't allow to move back up
             if (downValue > rightValue && downValue > leftValue) {// move down
-                moveDown();
-                drawDown(solution);
+                moveAndDraw(DOWN);
             } else if (rightValue > leftValue) {// move right
-                moveRight();
-                drawRight(solution);
+                moveAndDraw(RIGHT);
             } else if (leftValue > rightValue) {// move left
-                moveLeft();
-                drawLeft(solution);
+                moveAndDraw(LEFT);
             }
-        } else if (left) {// if just moved left, don't move back right
+        } else if (direction == LEFT) {// if just moved left, don't move back right
             if (downValue > upValue && downValue > leftValue) {//move down
-                moveDown();
-                drawDown(solution);
+                moveAndDraw(DOWN);
             } else if (upValue > leftValue) {// move up
-                moveUp();
-                drawUp(solution);
+                moveAndDraw(UP);
             } else if (leftValue > upValue) {// move left
-                moveLeft();
-                drawLeft(solution);
+                moveAndDraw(LEFT);
             }
-        } else if (right) {// if just moved right, don't move back left
+        } else {// if just moved right, don't move back left
             if (downValue > rightValue && downValue > upValue) {// move down
-                moveDown();
-                drawDown(solution);
+                moveAndDraw(DOWN);
             } else if (upValue > rightValue) {// move up
-                moveUp();
-                drawUp(solution);
+                moveAndDraw(UP);
             } else if (rightValue > upValue) {// move right
-                moveRight();
-                drawRight(solution);
+                moveAndDraw(RIGHT);
             }
         }
     }
 
-    public void drawDown(int[][] solution) {
-        drawOutSolution(solution, false, true, false, false);
-    }
-
-    public void drawUp(int[][] solution) {
-        drawOutSolution(solution, true, false, false, false);
-    }
-
-    public void drawLeft(int[][] solution) {
-        drawOutSolution(solution, false, false, true, false);
-    }
-
-    public void drawRight(int[][] solution) {
-        drawOutSolution(solution, false, false, false, true);
+    public void moveAndDraw(int direction) {
+        if (direction == UP) {
+            moveUp();
+        } else if (direction == RIGHT) {
+            moveRight();
+        } else if (direction == DOWN) {
+            moveDown();
+        } else {
+            moveLeft();
+        }
+        drawOutSolution(direction);
     }
 
     public void moveUp() {
