@@ -74,16 +74,13 @@ public class MazeSolver {
     }
 
     public void solveAndDrawMaze() {
-        int[][] table = new int[rows][cols];
+        solution = new int[rows][cols];
         if (GAME_OVER) {
-            lookupMazeSolution(table, 0, 0, NONE);
-            solution = table;
-            drawOutSolution(NONE);
+            lookupMazeSolution(solution, 0, 0, NONE);
         } else {
-            lookupMazeSolution(table, currentRow, currentCol, NONE);
-            solution = table;
-            drawOutSolution(NONE);
+            lookupMazeSolution(solution, currentRow, currentCol, NONE);
         }
+        drawOutSolution(NONE);
     }
 
     public int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol, int direction) {
@@ -96,7 +93,12 @@ public class MazeSolver {
             NOT_FOUND = false;
             table[currentTableRow][currentTableCol] = 100;
             return table[currentTableRow][currentTableCol];
-        } else if (NOT_FOUND) {
+        } else if (NOT_FOUND && currentTableRow >= 0 && currentTableCol >= 0 && currentTableRow < rows && currentTableCol < cols) {
+//            table[currentTableRow][currentTableCol] = Math.max(
+//                    Math.max(lookupMazeSolution(table, currentTableRow - 1, currentTableCol, UP),
+//                            lookupMazeSolution(table, currentTableRow + 1, currentTableCol, DOWN)), 
+//                    Math.max(lookupMazeSolution(table, currentTableRow, currentTableCol + 1, RIGHT),
+//                            lookupMazeSolution(table, currentTableRow, currentTableCol - 1, LEFT)));
             if (!cell[currentTableRow][currentTableCol].isWall(0) &&
                     (direction != DOWN)) {
                 stepUp = lookupMazeSolution(table, currentTableRow - 1, currentTableCol, UP);
