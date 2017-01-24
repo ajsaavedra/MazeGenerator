@@ -8,7 +8,7 @@ public class MazeSolver {
     private int cols;
     private int endRow;
     private int endCol;
-    private int UP, DOWN, LEFT, RIGHT, NONE;
+    private int UP, DOWN, LEFT, RIGHT;
     private boolean GAME_OVER, GAME_START, GAME_IS_WON;
     private static boolean SOLVE_MODE;
     private boolean NOT_FOUND;
@@ -24,7 +24,6 @@ public class MazeSolver {
         this.RIGHT = 1;
         this.DOWN = 2;
         this.LEFT = 3;
-        this.NONE = 4;
     }
 
     public void setSolveMode(boolean b) {
@@ -76,11 +75,11 @@ public class MazeSolver {
     public void solveAndDrawMaze() {
         solution = new int[rows][cols];
         if (GAME_OVER) {
-            lookupMazeSolution(solution, 0, 0, NONE);
+            lookupMazeSolution(solution, 0, 0, -1);
         } else {
-            lookupMazeSolution(solution, currentRow, currentCol, NONE);
+            lookupMazeSolution(solution, currentRow, currentCol, -1);
         }
-        drawOutSolution(NONE);
+        drawOutSolution();
     }
 
     public int lookupMazeSolution(int[][] table, int currentTableRow, int currentTableCol, int direction) {
@@ -116,7 +115,7 @@ public class MazeSolver {
         return table[currentTableRow][currentTableCol];
     }
 
-    public void drawOutSolution(int direction) {  
+    public void drawOutSolution() {
         while (currentRow < endRow || currentCol < endCol) {
             Cell location = cell[currentRow][currentCol];
             boolean[] path = location.getWalls();

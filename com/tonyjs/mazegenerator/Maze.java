@@ -12,7 +12,7 @@ public class Maze {
     private int col;
     private int visitedCells = 1;
     private ArrayList<Cell> savedCells = new ArrayList<Cell>();
-    
+
     public Maze(Cell[][] cell, int rows, int cols) {
         this.cell = cell;
         this.rows = rows;
@@ -21,7 +21,7 @@ public class Maze {
         this.row = rand.nextInt(rows);
         this.col = rand.nextInt(cols);
     }
-    
+
     public void carveOutMaze() {
         if (visitedCells < rows * cols) {
             ArrayList<Cell> neighbors = getNeighbors(row, col);
