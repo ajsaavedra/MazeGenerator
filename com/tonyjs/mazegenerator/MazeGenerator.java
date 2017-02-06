@@ -104,7 +104,7 @@ public class MazeGenerator extends JFrame {
 		// listeners
 		addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				if (mazeSolver.isGameStart() && !mazeSolver.isGameWon() && !mazeSolver.isGameOver()) {
+				if (mazeSolver.isGameStart() && !mazeSolver.isGameOver()) {
 					int key = e.getKeyCode();
 					mazeSolver.moveBall(key);
 					if (mazeSolver.isWon()) {
@@ -122,8 +122,7 @@ public class MazeGenerator extends JFrame {
 			int elapsedSeconds = 90;
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String seconds = Integer.toString(elapsedSeconds);
-				if (mazeSolver.isGameOver() || mazeSolver.isGameWon() || !mazeSolver.isGameStart()) {
+				if (mazeSolver.isGameOver() || mazeSolver.isGameWon()) {
 					timer.stop();
 				} else if (elapsedSeconds == 0) {
 					timer.stop();
@@ -131,7 +130,7 @@ public class MazeGenerator extends JFrame {
 					getGameState();
 				} else {
 					--elapsedSeconds;
-					timerL.setText("Time: " + seconds);
+					timerL.setText("Time: " + Integer.toString(elapsedSeconds));
 				}
 			}
 		});

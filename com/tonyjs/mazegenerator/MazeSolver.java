@@ -93,20 +93,16 @@ public class MazeSolver {
             table[currentTableRow][currentTableCol] = 100;
             return table[currentTableRow][currentTableCol];
         } else if (NOT_FOUND) {
-            if (!cell[currentTableRow][currentTableCol].isWall(0) &&
-                    (direction != DOWN)) {
+            if (!cell[currentTableRow][currentTableCol].isWall(UP) && direction != DOWN) {
                 stepUp = lookupMazeSolution(table, currentTableRow - 1, currentTableCol, UP);
             }
-            if (!cell[currentTableRow][currentTableCol].isWall(1) &&
-                    (direction != LEFT)) {
+            if (!cell[currentTableRow][currentTableCol].isWall(RIGHT) && direction != LEFT) {
                 stepRight = lookupMazeSolution(table, currentTableRow, currentTableCol + 1, RIGHT);
             }
-            if (!cell[currentTableRow][currentTableCol].isWall(2) &&
-                    (direction != UP)) {
+            if (!cell[currentTableRow][currentTableCol].isWall(DOWN) && direction != UP) {
                 stepDown = lookupMazeSolution(table, currentTableRow + 1, currentTableCol, DOWN);
             }
-            if (!cell[currentTableRow][currentTableCol].isWall(3) &&
-                    (direction != RIGHT)) {
+            if (!cell[currentTableRow][currentTableCol].isWall(LEFT) && direction != RIGHT) {
                 stepLeft = lookupMazeSolution(table, currentTableRow, currentTableCol - 1, LEFT);
             }
         }
@@ -118,10 +114,9 @@ public class MazeSolver {
     public void drawOutSolution() {
         while (currentRow < endRow || currentCol < endCol) {
             Cell location = cell[currentRow][currentCol];
-            boolean[] path = location.getWalls();
             int realRow = currentRow;
             int realCol = currentCol;
-            for (int i = 0; i < path.length; i++) {
+            for (int i = 0; i < 4; i++) {
                 if (!location.isWall(i)) {
                     if (i == UP) {
                         realRow = location.getRow()-1;
@@ -163,48 +158,48 @@ public class MazeSolver {
     public void moveBall(int direction) {
         switch (direction) {
         case 38: // up
-            if (!cell[currentRow][currentCol].isWall(0)) {
-                moveTo(currentRow-1, currentCol, 0, 2);
-                while (!cell[currentRow][currentCol].isWall(0) &&
-                        cell[currentRow][currentCol].isWall(1) &&
-                        cell[currentRow][currentCol].isWall(3)) {
-                    moveTo(currentRow-1, currentCol, 0, 2);
+            if (!cell[currentRow][currentCol].isWall(UP)) {
+                moveTo(currentRow-1, currentCol, UP, DOWN);
+                while (!cell[currentRow][currentCol].isWall(UP) &&
+                        cell[currentRow][currentCol].isWall(RIGHT) &&
+                        cell[currentRow][currentCol].isWall(LEFT)) {
+                    moveTo(currentRow-1, currentCol, UP, DOWN);
                 }
             } else {
                 SoundEffect.playWallEffect();
             }
             break;
         case 40: // down
-            if (!cell[currentRow][currentCol].isWall(2)) {
-                moveTo(currentRow+1, currentCol, 2, 0);
-                while (!cell[currentRow][currentCol].isWall(2) &&
-                        cell[currentRow][currentCol].isWall(1) &&
-                        cell[currentRow][currentCol].isWall(3)) {
-                    moveTo(currentRow+1, currentCol, 2, 0);
+            if (!cell[currentRow][currentCol].isWall(DOWN)) {
+                moveTo(currentRow+1, currentCol, DOWN, UP);
+                while (!cell[currentRow][currentCol].isWall(DOWN) &&
+                        cell[currentRow][currentCol].isWall(RIGHT) &&
+                        cell[currentRow][currentCol].isWall(LEFT)) {
+                    moveTo(currentRow+1, currentCol, DOWN, UP);
                 }
             } else {
                 SoundEffect.playWallEffect();
             }
             break;
         case 39: // right
-            if (!cell[currentRow][currentCol].isWall(1)) {
-                moveTo(currentRow, currentCol+1, 1, 3);
-                while (!cell[currentRow][currentCol].isWall(1) &&
-                        cell[currentRow][currentCol].isWall(0) &&
-                        cell[currentRow][currentCol].isWall(2)) {
-                    moveTo(currentRow, currentCol+1, 1, 3);
+            if (!cell[currentRow][currentCol].isWall(RIGHT)) {
+                moveTo(currentRow, currentCol+1, RIGHT, LEFT);
+                while (!cell[currentRow][currentCol].isWall(RIGHT) &&
+                        cell[currentRow][currentCol].isWall(UP) &&
+                        cell[currentRow][currentCol].isWall(DOWN)) {
+                    moveTo(currentRow, currentCol+1, RIGHT, LEFT);
                 }
             } else {
                 SoundEffect.playWallEffect();
             }
             break;
         case 37: // left
-            if (!cell[currentRow][currentCol].isWall(3)) {
-                moveTo(currentRow, currentCol-1, 3, 1);
-                while (!cell[currentRow][currentCol].isWall(3) &&
-                        cell[currentRow][currentCol].isWall(0) &&
-                        cell[currentRow][currentCol].isWall(2)) {
-                    moveTo(currentRow, currentCol-1, 3, 1);
+            if (!cell[currentRow][currentCol].isWall(LEFT)) {
+                moveTo(currentRow, currentCol-1, LEFT, RIGHT);
+                while (!cell[currentRow][currentCol].isWall(LEFT) &&
+                        cell[currentRow][currentCol].isWall(UP) &&
+                        cell[currentRow][currentCol].isWall(DOWN)) {
+                    moveTo(currentRow, currentCol-1, LEFT, RIGHT);
                 }
             } else {
                 SoundEffect.playWallEffect();

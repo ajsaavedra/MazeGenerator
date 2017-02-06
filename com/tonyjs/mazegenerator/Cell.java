@@ -45,10 +45,6 @@ public class Cell extends JPanel {
 	public boolean hasAllWalls() {
 		return wall[TOP] && wall[RIGHT] && wall[BOTTOM] && wall[LEFT];
 	}
-	
-	public boolean[] getWalls() {
-	    return wall;
-	}
 
 	public void removeWall(int w) {
 		wall[w] = false;
@@ -138,7 +134,6 @@ public class Cell extends JPanel {
 		g2d.drawLine(x1, y1, x2, y2);
 		g2d.dispose();
 	}
-
 
 	public Dimension getPreferredSize() {
 		Dimension size = new Dimension(SIZE, SIZE);
