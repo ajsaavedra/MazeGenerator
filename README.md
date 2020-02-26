@@ -6,7 +6,7 @@ Seeing a solution comes in two forms: if you lose the game, you can view the sol
 
 If you get lost, and want to simply see the solution, the solution will lead you out of the maze from your current position.
 
-##Building
+## Building
 This project repo is ready to be used from Eclipse.
 
 In Eclipse go to: File/New/Project. Select Java.
@@ -17,7 +17,7 @@ Eclipse will display a warning that says that your project "overlaps the locatio
 
 Re-select "Use default location," and now Eclipse will let you click on the "Next" button to continue configuration of your project.
 
-##Playing
+## Playing
 The object of the game is to get from one end to the next.  
 
 In this GUI, the player has to press down on the arrow keys to
